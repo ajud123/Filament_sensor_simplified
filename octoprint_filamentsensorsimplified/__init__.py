@@ -387,8 +387,7 @@ class Filament_sensor_simplifiedPlugin(octoprint.plugin.StartupPlugin,
         return (pin_value + power + trigger_mode) % 2 is 0
 
     # set up filament runout events
-    def register_custom_events(self, *args, **kwargs):
-        self.logger.info("Setting up events")
+    def register_custom_events(*args, **kwargs):
         return ["filament_runout"]
 
     def on_event(self, event, payload):
@@ -459,7 +458,7 @@ class Filament_sensor_simplifiedPlugin(octoprint.plugin.StartupPlugin,
                 current=self._plugin_version,
 
                 # update method: pip
-                pip="https://github.com/luckyx182/Filament_sensor_simplified/archive/{target_version}.zip"
+                pip="https://github.com/ajud123/Filament_sensor_simplified/archive/{target_version}.zip"
             )
         )
 
