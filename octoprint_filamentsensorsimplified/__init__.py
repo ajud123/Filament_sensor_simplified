@@ -3,7 +3,7 @@ from __future__ import absolute_import
 
 import octoprint.plugin
 import re
-from octoprint.events import Events
+from octoprint.events import Events, eventManager
 from time import sleep
 import RPi.GPIO as GPIO
 import flask
@@ -130,6 +130,7 @@ class Filament_sensor_simplifiedPlugin(octoprint.plugin.StartupPlugin,
 
     def send_out_of_filament(self):
         self.show_printer_runout_popup()
+        eventManager().fire(Events.PLUGIN_FILAMENTSENSORSIMPLIFIED_FILAMENT_RUNOUT)
         if self.setting_cmd_action is 0:
             self._logger.info("Sending out of filament GCODE: %s" % (self.setting_gcode))
             self._printer.commands(self.setting_gcode)
@@ -385,6 +386,10 @@ class Filament_sensor_simplifiedPlugin(octoprint.plugin.StartupPlugin,
         pin_value = GPIO.input(pin)
         return (pin_value + power + trigger_mode) % 2 is 0
 
+    # set up filament runout events
+    def register_custom_events(*args, **kwargs):
+        return ["filament_runout"]
+
     def on_event(self, event, payload):
         # if user has logged in show appropriate popup
         if event is Events.CLIENT_OPENED:
@@ -435,6 +440,7 @@ class Filament_sensor_simplifiedPlugin(octoprint.plugin.StartupPlugin,
             self.changing_filament_command_sent = False
             self.paused_for_user = False
             self.printing = False
+
 
     def get_update_information(self):
         # Define the configuration for your plugin to use with the Software Update
